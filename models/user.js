@@ -29,6 +29,10 @@ const userScheme = new mongoose.Schema(
                 params: /^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i,
                 message: "Должен начинаться с http, https, проверьте правильность формата",
             },
+            required: {
+              value: true,
+              message: "Поле является обязательным",
+          },
         },
     },
     { versionKey: false, timestamps: true }
