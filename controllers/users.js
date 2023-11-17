@@ -33,7 +33,7 @@ module.exports.createUser = async (req, res) => {
         res.status(201).send(newUser);
     } catch (error) {
         if (error.name === "ValidationError") {
-            return res.status(400).send({ message: "Невалидные данные" });
+            return res.status(400).send({ message: "Ошибка валидации полей", ...error });
         }
         console.log(error.code);
     }
