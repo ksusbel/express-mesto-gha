@@ -50,8 +50,8 @@ module.exports.updateUser = async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: "Пользователь не найден" });
         }
-
-        return res.send({ message: "Пользователь обновился" });
+        res.send(user);
+      //  return res.send({ message: "Пользователь обновился" });
     } catch (err) {
       return res.status(500).send({ message: "Ошибка на стороне сервера" });
     }
