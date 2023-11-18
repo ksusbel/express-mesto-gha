@@ -34,7 +34,7 @@ module.exports.createUser = async (req, res, next) => {
         if (err.name === "ValidationError") {
             return res.status(400).send({ message: "Ошибка валидации полей", ...err });
         }
-      next(err);
+        return res.status(500).send({ message: "Ошибка на стороне сервера" });
     }
 };
 
