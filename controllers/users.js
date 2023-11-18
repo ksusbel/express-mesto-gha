@@ -65,8 +65,8 @@ module.exports.updateAvatar = async (req, res, next) => {
         if (!user) {
             return res.status(404).send({ message: "Пользователь не найден" });
         }
-
-        return res.send({ message: "Аватар обновился" });
+        res.send(user);
+       // return res.send({ message: "Аватар обновился" });
     } catch (err) {
         next(err);
     }
