@@ -25,16 +25,16 @@ module.exports.getUserById = async (req, res) => {
     }
 };
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
     try {
         const { name, about, avatar } = req.body;
         const newUser = await User.create({ name, about, avatar });
         res.status(201).send(newUser);
-    } catch (error) {
-        if (error.name === "ValidationError") {
-            return res.status(400).send({ message: "Ошибка валидации полей", ...error });
+    } catch (err) {
+        if (err.name === "ValidationError") {
+            return res.status(400).send({ message: "Ошибка валидации полей", ...err });
         }
-      next(error);
+      next(err);
     }
 };
 
