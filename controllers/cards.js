@@ -11,7 +11,7 @@ module.exports.getCards = async (req, res) => {
     }
 };
 
-module.exports.createCard = async (req, res, next) => {
+module.exports.createCard = async (req, res) => {
     try {
         const { name, link } = req.body;
         console.log(req.user._id); // _id станет доступен
@@ -26,26 +26,26 @@ module.exports.createCard = async (req, res, next) => {
     }
 };
 
-module.exports.deleteCard = async (req, res, next) => {
+module.exports.deleteCard = async (req, res) => {
     try {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+            return res.status(400).send({ message: "Карточка не найдена" });
         }
         await Card.findOneAndDelete(cardId);
         return res.send({ message: "Карточка удалилась" });
     } catch (err) {
-        next(err);
+      return res.status(400).send({ message: "Карточка не найдена" });
     }
 };
 
-module.exports.likeCard = async (req, res, next) => {
+module.exports.likeCard = async (req, res) => {
     try {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+            return res.status(400).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
@@ -54,16 +54,16 @@ module.exports.likeCard = async (req, res, next) => {
         );
         return res.send({ message: "Лайк поставился" });
     } catch (err) {
-        next(err);
+      return res.status(400).send({ message: "Карточка не найдена" });
     }
 };
 
-module.exports.dislikeCard = async (req, res, next) => {
+module.exports.dislikeCard = async (req, res) => {
     try {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+            return res.status(400).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
@@ -72,6 +72,6 @@ module.exports.dislikeCard = async (req, res, next) => {
         );
         return res.send({ message: "Лайк убрался" });
     } catch (err) {
-        next(err);
+      return res.status(400).send({ message: "Карточка не найдена" });
     }
 };

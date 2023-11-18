@@ -53,7 +53,7 @@ module.exports.updateUser = async (req, res) => {
         res.send(user);
       //  return res.send({ message: "Пользователь обновился" });
     } catch (err) {
-      return res.status(400).send({ message: "Нвалидное поле" });
+      return res.status(400).send({ message: "Нeвалидное поле" });
     }
 };
 
