@@ -31,7 +31,7 @@ app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
 
 app.use((req, res, next) => {
-  return res.status(400).send({ message: "'Такой страницы не существует" });
+  return res.status(404).send({ message: "Такой страницы не существует" });
 });
 
 app.get("/", (req, res) => {
