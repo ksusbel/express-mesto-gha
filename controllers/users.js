@@ -25,7 +25,7 @@ module.exports.getUserById = async (req, res) => {
     }
 };
 
-module.exports.createUser = async (req, res, next) => {
+module.exports.createUser = async (req, res) => {
     try {
         const { name, about, avatar } = req.body;
         const newUser = await User.create({ name, about, avatar });
@@ -38,7 +38,7 @@ module.exports.createUser = async (req, res, next) => {
     }
 };
 
-module.exports.updateUser = async (req, res, next) => {
+module.exports.updateUser = async (req, res) => {
     try {
         const userId = req.user._id;
         const { name, about } = req.body;
@@ -49,7 +49,7 @@ module.exports.updateUser = async (req, res, next) => {
 
         return res.send({ message: "Пользователь обновился" });
     } catch (err) {
-        next(err);
+      return res.status(500).send({ message: "Ошибка на стороне сервера" });
     }
 };
 
