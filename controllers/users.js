@@ -29,7 +29,6 @@ module.exports.createUser = async (req, res) => {
     try {
         const { name, about, avatar } = req.body;
         const newUser = await User.create({ name, about, avatar });
-
         res.status(201).send(newUser);
     } catch (error) {
         if (error.name === "ValidationError") {

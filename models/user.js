@@ -7,20 +7,14 @@ const userScheme = new mongoose.Schema(
             minlength: [2, "Минимальная длинна 2 символа"],
             maxlength: [30, "Максимальная длинна 30 символа"],
             default: "Жак-Ив Кусто",
-            required: {
-                value: true,
-                message: "Поле является обязательным",
-            },
+            required: true
         },
         about: {
             type: String,
             minlength: [2, "Минимальная длинна 2 символа"],
             maxlength: [30, "Максимальная длинна 30 символа"],
             default: "Исследователь",
-            required: {
-                value: true,
-                message: "Поле является обязательным",
-            },
+            required: true
         },
         avatar: {
             type: String,
@@ -29,10 +23,7 @@ const userScheme = new mongoose.Schema(
                 params: /^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i,
                 message: "Должен начинаться с http, https, проверьте правильность формата",
             },
-            required: {
-              value: true,
-              message: "Поле является обязательным",
-          },
+            required: true
         },
     },
     { versionKey: false, timestamps: true }
