@@ -7,7 +7,7 @@ module.exports.getUsers = async (req, res) => {
         const users = await User.find({});
         return res.send(users);
     } catch (error) {
-        return res.status(500).send({ message: "Ошибка на стороне сервера" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -25,7 +25,7 @@ module.exports.getUserById = async (req, res) => {
         if (error.name === "CastError") {
             return res.status(400).send({ message: "Передан не валидный id" });
         }
-        return res.status(500).send({ message: "Ошибка на стороне сервера" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -38,7 +38,7 @@ module.exports.createUser = async (req, res) => {
         if (err.name === "ValidationError") {
             return res.status(400).send({ message: "Ошибка валидации полей", ...err });
         }
-        return res.status(500).send({ message: "Ошибка на стороне сервера" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -53,11 +53,11 @@ module.exports.updateUser = async (req, res) => {
         res.send(user);
         //  return res.send({ message: "Пользователь обновился" });
     } catch (err) {
-        return res.status(400).send({ message: "Нeвалидное поле" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
-module.exports.updateAvatar = async (req, res, next) => {
+module.exports.updateAvatar = async (req, res) => {
     try {
         const userId = req.user._id;
         const { avatar } = req.body;
@@ -68,6 +68,6 @@ module.exports.updateAvatar = async (req, res, next) => {
         res.send(user);
         // return res.send({ message: "Аватар обновился" });
     } catch (err) {
-        next(err);
+      return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };

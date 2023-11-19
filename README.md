@@ -1,7 +1,7 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
-[Ссылка на проект](https://ksusbel.github.io/express-mesto-gha/)
+[Ссылка на проект](https://github.com/ksusbel/express-mesto-gha)
 
 ## Директории
 

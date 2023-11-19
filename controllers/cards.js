@@ -7,7 +7,7 @@ module.exports.getCards = async (req, res) => {
         const cards = await Card.find({});
         return res.send(cards);
     } catch (error) {
-        return res.status(500).send({ message: "Ошибка на стороне сервера" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -36,7 +36,7 @@ module.exports.deleteCard = async (req, res) => {
         await Card.findOneAndDelete(cardId);
         return res.send({ message: "Карточка удалилась" });
     } catch (err) {
-        return res.status(400).send({ message: "Карточка не найдена" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -54,7 +54,7 @@ module.exports.likeCard = async (req, res) => {
         );
         return res.send({ message: "Лайк поставился" });
     } catch (err) {
-        return res.status(400).send({ message: "Карточка не найдена" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
 
@@ -72,6 +72,6 @@ module.exports.dislikeCard = async (req, res) => {
         );
         return res.send({ message: "Лайк убрался" });
     } catch (err) {
-        return res.status(400).send({ message: "Карточка не найдена" });
+        return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
