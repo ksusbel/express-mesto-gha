@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 
 const ERROR_CODE_DUPLICATE_MONGO = 11000;
@@ -29,17 +31,19 @@ module.exports.getUserById = async (req, res) => {
     }
 };
 
-module.exports.createUser = async (req, res) => {
-    try {
-        const { name, about, avatar } = req.body;
-        const newUser = await User.create({ name, about, avatar });
-        res.status(201).send(newUser);
-    } catch (err) {
-        if (err.name === "ValidationError") {
-            return res.status(400).send({ message: "Ошибка валидации полей", ...err });
-        }
-        return res.status(500).send({ message: "На сервере произошла ошибка" });
-    }
+module.exports.createUser = (req, res) => {
+  //const {email, password, name, about, avatar, } = req.body;
+  // хешируем пароль
+  bcrypt.hash(req.body.password, 10)
+    .then(hash => User.create({
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+      email: req.body.email,
+      password: hash // записываем хеш в базу
+    }))
+    .then((user) => res.send(user))
+    .catch((err) => res.status(400).send(err));
 };
 
 module.exports.updateUser = async (req, res) => {
@@ -70,4 +74,29 @@ module.exports.updateAvatar = async (req, res) => {
     } catch (err) {
       return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findOne({ email })
+  .select('+password')
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+
+      // вернём токен
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user.payload)
+    .then((user) => res.send(user))
+    .catch(next);
 };

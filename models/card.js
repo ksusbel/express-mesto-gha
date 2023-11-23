@@ -4,28 +4,19 @@ const cardScheme = new mongoose.Schema(
     {
         name: {
             type: String,
-            minlength: [2, "Минимальная длинна 2 символа"],
-            maxlength: [30, "Максимальная длинна 30 символа"],
-            required: {
-                value: true,
-                message: "Поле является обязательным",
-            },
+            minlength: 2,
+            maxlength: 30,
+            required: true
         },
         link: {
             type: String,
             validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
-            required: {
-                value: true,
-                message: "Поле является обязательным",
-            },
+            required: true
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "user",
-            required: {
-                value: true,
-                message: "Поле является обязательным",
-            },
+            required: true
         },
         likes: {
             type: [

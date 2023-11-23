@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { auth } = require('./middlewares/auth');
+const { createUser, login } = require('./controllers/users');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -19,14 +21,13 @@ mongoose
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-    req.user = {
-        _id: "65572f552edf5e0725ea693b",
-    };
+app.post('/signup', createUser);
+app.post('/signin', login);
 
-    next();
-});
+// авторизация
+app.use(auth);
 
+// роуты, которым авторизация нужна
 app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
 
