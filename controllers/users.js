@@ -88,7 +88,7 @@ module.exports.updateAvatar = async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: "Пользователь не найден" });
         }
-        res.status(200).send(user);
+        res.send(user);
         // return res.send({ message: "Аватар обновился" });
     } catch (err) {
       return res.status(500).send({ message: "На сервере произошла ошибка" });
@@ -101,21 +101,11 @@ module.exports.login = (req, res) => {
   return User.findOne({ email })
   .select('+password')
     .then((user) => {
-      if (!user) {
-        // пользователь не найден — отклоняем промис
-        // с ошибкой и переходим в блок catch
-        return res.status(404).send({ message: 'Неправильные почта или пароль'});
-      }
-      return bcrypt.compare(password, user.password);
-    })
-      .then((matched) => {
-        if (!matched) {
-          // хеши не совпали — отклоняем промис
-          return res.status(404).send({ message: 'Неправильные почта или пароль'});
-        }
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
 
-        // аутентификация успешна
-        res.send({ message: 'Всё верно!' });
+      // вернём токен
+      res.send({ token });
     })
     .catch((err) => {
       res
