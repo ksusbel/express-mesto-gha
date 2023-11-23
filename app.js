@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { auth } = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -53,6 +54,8 @@ app.use("/cards", require("./routes/cards"));
 app.use((req, res, next) => {
   return res.status(404).send({ message: "Такой страницы не существует" });
 });
+
+app.use(errors());
 
 app.get("/", (req, res) => {
     res.status(200).send({ message: "Привет" });

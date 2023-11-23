@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
+const ValidationError = require('../errors/ValidationError');
+const AlreadyExistsError = require('../errors/AlreadyExistsError');
 
 const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
@@ -32,24 +34,27 @@ module.exports.getUserById = async (req, res) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  //const {email, password, name, about, avatar, } = req.body;
+  const {email, password, name, about, avatar, } = req.body;
   // хешируем пароль
   bcrypt.hash(req.body.password, 10)
     .then(hash => User.create({
-      name: req.body.name,
-      about: req.body.about,
-      avatar: req.body.avatar,
-      email: req.body.email,
+      name,
+      about,
+      avatar,
+      email,
       password: hash // записываем хеш в базу
-    }))
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-      next(console.log('Переданы неккоректные данные для создания пользователя.'));
-    } else {
-      next(console.log('dfhdzfhdh'));
-    }
-  });
+}))
+.then((user) => res.status(201).send(user))
+.catch((err) => {
+   if (err.code === 11000) {
+    next(new AlreadyExistsError('Пользователь с таким email уже существует'));
+  } else
+   /* if (err.code === 400) {
+    next(new ValidationError('Переданы некорректные данные при создании пользователя'));
+  } else */ {
+    next(err);
+  }
+})
 };
 
 module.exports.updateUser = async (req, res) => {
