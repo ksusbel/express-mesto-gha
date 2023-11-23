@@ -11,19 +11,22 @@ module.exports.getCards = async (req, res) => {
     }
 };
 
-module.exports.createCard = async (req, res) => {
-    try {
+module.exports.createCard = (req, res) => {
         const { name, link } = req.body;
         console.log(req.user._id); // _id станет доступен
         const ownerId = req.user._id;
-        const newCard = await Card.create({ name, link, owner: ownerId });
-        res.status(201).send(newCard);
-    } catch (error) {
-        if (error.name === "ValidationError") {
+        Card.create({ name, link, owner: ownerId })
+        .then((newCard) => {
+          res.status(201).send({ data: newCard });
+        })
+
+    .catch ((err) =>  {
+        if (err.name === "ValidationError") {
             return res.status(400).send({ message: "Невалидные данные" });
+        } else {
+        next(err);
         }
-        console.log(error.code);
-    }
+    });
 };
 
 module.exports.deleteCard = async (req, res) => {

@@ -2,7 +2,7 @@ const userRouter = require("express").Router();
 const mongoose = require('mongoose');
 const { auth } = require('../middlewares/auth');
 const { celebrate, Joi } = require('celebrate');
-//const { validateObjectId } = require('../utils/validateObjectId');
+
 const { getUsers, getUserById, createUser, updateUser, updateAvatar, login, getCurrentUser } = require("../controllers/users");
 
 userRouter.get("/", getUsers);
