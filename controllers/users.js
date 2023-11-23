@@ -2,14 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const ValidationError = require('../errors/ValidationError');
-const AlreadyExistsError = require('../errors/AlreadyExistsError');
+//const AlreadyExistsError = require('../errors/AlreadyExistsError');
 
 const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
 module.exports.getUsers = async (req, res) => {
     try {
         const users = await User.find({});
-        return res.send(users);
+        return res.status(200).send(users);
     } catch (error) {
         return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
@@ -88,7 +88,7 @@ module.exports.updateAvatar = async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: "Пользователь не найден" });
         }
-        res.send(user);
+        res.status(200).send(user);
         // return res.send({ message: "Аватар обновился" });
     } catch (err) {
       return res.status(500).send({ message: "На сервере произошла ошибка" });
@@ -114,8 +114,14 @@ module.exports.login = (req, res) => {
     });
 };
 
-module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user.payload)
-    .then((user) => res.send(user))
-    .catch(next);
+module.exports.getCurrentUser = async (req, res) => {
+  try {
+     const user = User.findById(req.user._id)
+  if (!user) {
+    return res.status(404).send({ message: "Пользователь не найден" });
+  }
+ res.status(200).send(user);
+} catch (err) {
+  return res.status(500).send({ message: "На сервере произошла ошибка" });
+}
 };
