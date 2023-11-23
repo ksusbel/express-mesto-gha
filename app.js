@@ -1,15 +1,19 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
-const { auth } = require('./middlewares/auth');
+
 const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
-
+const { auth } = require('./middlewares/auth');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = "mongodb://127.0.0.1:27017/mestodb";
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose
     .connect(DATABASE_URL)
