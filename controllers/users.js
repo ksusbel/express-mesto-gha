@@ -116,7 +116,7 @@ module.exports.login = (req, res) => {
 
 module.exports.getCurrentUser = async (req, res) => {
   try {
-     const user = User.findById(req.user._id)
+     const user = await User.findById(req.user._id)
   if (!user) {
     return res.status(404).send({ message: "Пользователь не найден" });
   }
