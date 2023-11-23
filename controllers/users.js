@@ -98,24 +98,15 @@ module.exports.updateAvatar = async (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   console.log(password);
-  User.findOne({ email })
+  return User.findOne({ email })
   .select('+password')
     .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "Пользователь не найден" });
-      }
-      bcrypt.compare(password, user.password)
-      .then((matched) => {
-        if (!matched) {
-          return res.status(404).send({ message: "Пользователь не найден" });
-        }
       // создадим токен
       const token = jwt.sign({ _id: user._id }, 'some-secret-key');
 console.log(token);
       // вернём токен
-      return res.send({ JWT: token });
+      res.send({ token });
       console.log(password);
-      });
     })
     .catch((err) => {
       res
@@ -124,7 +115,7 @@ console.log(token);
     });
 };
 
-module.exports.getCurrentUser = async (req, res) => {
+module.exports.getCurrentUser = async (req, res, next) => {
   try {
     console.log("user");
      const user = await User.findById(req.user._id)

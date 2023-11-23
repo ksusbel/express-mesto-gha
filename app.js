@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const { createUser, login } = require('./controllers/users');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
-const { auth } = require('./middlewares/auth');
+const  auth  = require('./middlewares/auth');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = "mongodb://127.0.0.1:27017/mestodb";

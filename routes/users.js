@@ -1,6 +1,6 @@
 const userRouter = require("express").Router();
 const mongoose = require('mongoose');
-const { auth } = require('../middlewares/auth');
+const  auth  = require('../middlewares/auth');
 const { celebrate, Joi } = require('celebrate');
 
 const { getUsers, getUserById, createUser, updateUser, updateAvatar, login, getCurrentUser } = require("../controllers/users");
@@ -33,7 +33,7 @@ updateAvatar);
 
 //userRouter.post('/signin', login);
 //userRouter.post('/signup', createUser);
-userRouter.get('/me', auth, getCurrentUser);
+userRouter.get('/me', getCurrentUser);
 
 function validateObjectId(value) {
   const isValid = mongoose.isValidObjectId(value);
