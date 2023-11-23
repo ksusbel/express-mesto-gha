@@ -31,7 +31,7 @@ module.exports.getUserById = async (req, res) => {
     }
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   //const {email, password, name, about, avatar, } = req.body;
   // хешируем пароль
   bcrypt.hash(req.body.password, 10)
@@ -43,7 +43,13 @@ module.exports.createUser = (req, res) => {
       password: hash // записываем хеш в базу
     }))
     .then((user) => res.send(user))
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+      next(console.log('Переданы неккоректные данные для создания пользователя.'));
+    } else {
+      next(console.log('dfhdzfhdh'));
+    }
+  });
 };
 
 module.exports.updateUser = async (req, res) => {

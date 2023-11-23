@@ -33,6 +33,7 @@ celebrate({
   }),
 }),
 createUser);
+
 app.post('/signin',
 celebrate({
   body: Joi.object().keys({
