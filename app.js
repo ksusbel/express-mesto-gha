@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { auth } = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
+const { celebrate, Joi } = require('celebrate');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -21,8 +22,25 @@ mongoose
 
 app.use(express.json());
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.post('/signup',
+celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().regex(/^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+}),
+createUser);
+app.post('/signin',
+celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+}),
+login);
 
 // авторизация
 app.use(auth);
