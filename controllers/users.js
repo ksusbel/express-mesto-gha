@@ -95,34 +95,24 @@ module.exports.updateAvatar = async (req, res) => {
     }
 };
 
-module.exports.login = async (req, res) => {
+module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email })
-      .select("+password")
-      .orFail((err) => new Error("NotAutanticate"));
-
-    const matched = await bcrypt.compare(String(password), user.password);
-    if (!matched) {
-      throw new Error("NotAutanticate");
-    }
-
-    const token = generateToken({ _id: user._id, email: user.email });
-    res.cookie("parrotToken", token, {
-      httpOnly: true,
-      sameSite: true,
-      maxAge: 360000,
-    });
-    res.send({ email: user.email });
-  } catch (error) {
-    if (error.message === "NotAutanticate") {
-      return res
+  console.log(password);
+  return User.findOne({ email })
+  .select('+password')
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+console.log(token);
+      // вернём токен
+      res.send({ token });
+      console.log(password);
+    })
+    .catch((err) => {
+      res
         .status(401)
-        .send({ message: "Не правильные email или password" });
-    }
-
-    return res.status(500).send(error);
-  }
+        .send({ message: err.message });
+    });
 };
 
 module.exports.getCurrentUser = async (req, res, next) => {
