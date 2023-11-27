@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 
 const { createUser, login } = require('./controllers/users');
