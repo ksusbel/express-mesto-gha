@@ -2,9 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const ValidationError = require('../errors/ValidationError');
-//const AlreadyExistsError = require('../errors/AlreadyExistsError');
+const AlreadyExistsError = require('../errors/AlreadyExistsError');
 
-const ERROR_CODE_DUPLICATE_MONGO = 11000;
+//const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
 module.exports.getUsers = async (req, res) => {
     try {
