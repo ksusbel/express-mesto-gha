@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const ValidationError = require('../errors/ValidationError');
-//const AlreadyExistsError = require('../errors/AlreadyExistsError');
+const AlreadyExistsError = require('../errors/AlreadyExistsError');
 
 const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
@@ -35,11 +35,11 @@ module.exports.getCurrentUser = async (req, res, next) => {
             return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.status(200).send(user);
-    } catch (error) {
-        console.log(error);
-        if (error.name === "CastError") {
-            return res.status(400).send({ message: "Передан не валидный id" });
-        }
+    } catch (err) {
+     //   console.log(err);
+     if (err.code === 400) {
+      next(new ValidationError('Передан не валидный id'));
+     }
         return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
 };
@@ -64,11 +64,10 @@ module.exports.createUser = (req, res, next) => {
 }))
 .catch((err) => {
    if (err.code === 11000) {
-    res.status(409).send({ message: 'Пользователь с таким email уже существует' });
-    //next(new AlreadyExistsError('Пользователь с таким email уже существует'));
+   // res.status(409).send({ message: 'Пользователь с таким email уже существует' });
+    next(new AlreadyExistsError('Пользователь с таким email уже существует'));
   } else
     if (err.code === 400) {
-
     next(new ValidationError('Переданы некорректные данные при создании пользователя'));
   } else  {
     next(err);
