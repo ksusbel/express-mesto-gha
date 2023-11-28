@@ -7,17 +7,12 @@ const { getUsers, getUserById, updateUser, updateAvatar, getCurrentUser } = requ
 
 userRouter.get("/", getUsers);
 
-userRouter.get('/me', auth, celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-  }),
-}), getCurrentUser);
+userRouter.get('/me', auth, getCurrentUser);
 
  userRouter.get("/:userId", auth,
 celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().custom(validateObjectId),
+    userId: Joi.string().required().hex().length(24),
   }),
 }),
 getUserById);
@@ -40,14 +35,13 @@ celebrate({
 updateAvatar);
 
 
-
-function validateObjectId(value) {
+/* function validateObjectId(value) {
   const isValid = mongoose.isValidObjectId(value);
 
   if (isValid) return value;
 
   console.log('ID is not valid');
-}
+} */
 
 
 module.exports = userRouter;
