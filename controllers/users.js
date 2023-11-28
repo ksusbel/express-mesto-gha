@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const ValidationError = require('../errors/ValidationError');
-const AlreadyExistsError = require('../errors/AlreadyExistsError');
+//const AlreadyExistsError = require('../errors/AlreadyExistsError');
 
 const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
@@ -64,8 +64,8 @@ module.exports.createUser = (req, res, next) => {
 }))
 .catch((err) => {
    if (err.code === 11000) {
-   // res.status(409).send({ message: 'Пользователь с таким email уже существует' });
-    next(new AlreadyExistsError('Пользователь с таким email уже существует'));
+    res.status(409).send({ message: 'Пользователь с таким email уже существует' });
+    //next(new AlreadyExistsError('Пользователь с таким email уже существует'));
   } else
     if (err.code === 400) {
     next(new ValidationError('Переданы некорректные данные при создании пользователя'));
