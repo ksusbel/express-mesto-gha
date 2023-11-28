@@ -40,7 +40,7 @@ module.exports.deleteCard = async (req, res) => {
           return res.status(403).send({ message: "Нельзя удалить чужую карточку!" });
         }
         await Card.findOneAndDelete(cardId);
-        return res.status(403).send({ message: "Карточка удалилась" });
+        return res.status(200).send({ message: "Карточка удалилась" });
     } catch (err) {
         return res.status(500).send({ message: "На сервере произошла ошибка" });
     }
