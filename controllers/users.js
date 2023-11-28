@@ -21,7 +21,7 @@ module.exports.getCurrentUser = async (req, res, next) => {
   try {
      const user = await User.findById(req.user._id)
   if (!user) {
-    throw NotFoundError('Пользователь не найден');
+    throw new NotFoundError('Пользователь не найден');
   //  return res.status(404).send({ message: "Пользователь не найден" });
   }
  res.status(200).send(user);
@@ -35,7 +35,7 @@ module.exports.getCurrentUser = async (req, res, next) => {
         const { userId } = req.params;
         const user = await User.findById(userId);
         if (!user) {
-          throw NotFoundError('Пользователь не найден');
+          throw new NotFoundError('Пользователь не найден');
            // return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.status(200).send(user);
@@ -85,7 +85,7 @@ module.exports.updateUser = async (req, res) => {
         const { name, about } = req.body;
         const user = await User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true });
         if (!user) {
-          throw NotFoundError('Пользователь не найден');
+          throw new NotFoundError('Пользователь не найден');
           //  return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.send(user);
@@ -101,7 +101,7 @@ module.exports.updateAvatar = async (req, res) => {
         const { avatar } = req.body;
         const user = await User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true });
         if (!user) {
-          throw NotFoundError('Пользователь не найден');
+          throw new NotFoundError('Пользователь не найден');
           //  return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.send(user);
