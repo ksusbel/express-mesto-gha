@@ -4,19 +4,19 @@ const cardScheme = new mongoose.Schema(
     {
         name: {
             type: String,
-            minlength: [2, 'Имя не должно быть короче 2 символов'],
-            maxlength: [30, 'Имя не должно быть длиннее 30 символов'],
-            required: true
+            minlength: [2, "Имя не должно быть короче 2 символов"],
+            maxlength: [30, "Имя не должно быть длиннее 30 символов"],
+            required: true,
         },
         link: {
             type: String,
             validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
-            required: true
+            required: true,
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "user",
-            required: true
+            required: true,
         },
         likes: {
             type: [

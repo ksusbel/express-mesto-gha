@@ -1,7 +1,6 @@
 const Card = require("../models/card");
-const NotFoundError = require('../errors/NotFoundError');
-const  ValidationError  = require('../errors/ValidationError');
-
+//const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require("../errors/ValidationError");
 
 module.exports.getCards = async (req, res) => {
     try {
@@ -13,22 +12,22 @@ module.exports.getCards = async (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-        const { name, link } = req.body;
-        console.log(req.user._id); // _id станет доступен
-        const ownerId = req.user._id;
-        Card.create({ name, link, owner: ownerId })
+    const { name, link } = req.body;
+    console.log(req.user._id); // _id станет доступен
+    const ownerId = req.user._id;
+    Card.create({ name, link, owner: ownerId })
         .then((newCard) => {
-          res.status(201).send({ data: newCard });
+            res.status(201).send({ data: newCard });
         })
 
-    .catch ((err) =>  {
-        if (err.name === "ValidationError") {
-          next(new ValidationError('Невалидные данные'));
-          //  return res.status(400).send({ message: "Невалидные данные" });
-        } else {
-        next(err);
-        }
-    });
+        .catch((err) => {
+            if (err.name === "ValidationError") {
+                next(new ValidationError("Невалидные данные"));
+                //  return res.status(400).send({ message: "Невалидные данные" });
+            } else {
+                next(err);
+            }
+        });
 };
 
 module.exports.deleteCard = async (req, res) => {
@@ -36,11 +35,11 @@ module.exports.deleteCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-          throw new NotFoundError('Карточка не найдена');
-          //  return res.status(404).send({ message: "Карточка не найдена" });
+            //  throw new NotFoundError('Карточка не найдена');
+            return res.status(404).send({ message: "Карточка не найдена" });
         }
         if (!(card.owner._id.toString() === req.user._id)) {
-          return res.status(403).send({ message: "Нельзя удалить чужую карточку!" });
+            return res.status(403).send({ message: "Нельзя удалить чужую карточку!" });
         }
         await Card.findOneAndDelete(cardId);
         return res.status(200).send({ message: "Карточка удалилась" });
@@ -54,8 +53,8 @@ module.exports.likeCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-          throw new NotFoundError('Карточка не найдена');
-          //  return res.status(404).send({ message: "Карточка не найдена" });
+            // throw new NotFoundError('Карточка не найдена');
+            return res.status(404).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
@@ -73,8 +72,8 @@ module.exports.dislikeCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-          throw new NotFoundError('Карточка не найдена');
-          //  return res.status(404).send({ message: "Карточка не найдена" });
+            //  throw new NotFoundError('Карточка не найдена');
+            return res.status(404).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
