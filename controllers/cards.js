@@ -34,7 +34,7 @@ module.exports.deleteCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+            return res.status(403).send({ message: "Карточка не найдена" });
         }
         await Card.findOneAndDelete(cardId);
         return res.send({ message: "Карточка удалилась" });
