@@ -7,7 +7,12 @@ const { getUsers, getUserById, updateUser, updateAvatar, getCurrentUser } = requ
 
 userRouter.get("/", getUsers);
 
-userRouter.get('/me', auth, getCurrentUser);
+userRouter.get('/me', auth, celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+  }),
+}), getCurrentUser);
 
  userRouter.get("/:userId", auth,
 celebrate({
