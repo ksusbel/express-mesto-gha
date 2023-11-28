@@ -15,13 +15,25 @@ module.exports.getUsers = async (req, res) => {
     }
 };
 
-module.exports.getUserById = async (req, res) => {
+module.exports.getCurrentUser = async (req, res, next) => {
+  try {
+     const user = await User.findById(req.user._id)
+  if (!user) {
+    return res.status(404).send({ message: "Пользователь не найден" });
+  }
+ res.status(200).send(user);
+} catch (err) {
+  return res.status(500).send({ message: "На сервере произошла ошибка" });
+}
+};
+
+ module.exports.getUserById = async (req, res) => {
     try {
         const { userId } = req.params;
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).send({ message: "Пользователь не найден" });
+            return res.status(404).send({ message: "Пользователь не найден111" });
         }
         res.status(200).send(user);
     } catch (error) {
@@ -106,7 +118,7 @@ module.exports.login = (req, res) => {
 console.log(token);
       // вернём токен
       res.send({ token });
-      console.log(password);
+      console.log(token);
     })
     .catch((err) => {
       res
@@ -115,16 +127,4 @@ console.log(token);
     });
 };
 
-module.exports.getCurrentUser = async (req, res, next) => {
-  try {
-    console.log("user");
-     const user = await User.findById(req.user._id)
-     console.log(user);
-  if (!user) {
-    return res.status(404).send({ message: "Пользователь не найден" });
-  }
- res.status(200).send(user);
-} catch (err) {
-  return res.status(500).send({ message: "На сервере произошла ошибка" });
-}
-};
+

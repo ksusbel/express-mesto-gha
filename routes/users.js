@@ -3,17 +3,20 @@ const mongoose = require('mongoose');
 const  auth  = require('../middlewares/auth');
 const { celebrate, Joi } = require('celebrate');
 
-const { getUsers, getUserById, createUser, updateUser, updateAvatar, login, getCurrentUser } = require("../controllers/users");
+const { getUsers, getUserById, updateUser, updateAvatar, getCurrentUser } = require("../controllers/users");
 
 userRouter.get("/", getUsers);
-userRouter.get("/:userId", auth,
+
+userRouter.get('/me', auth, getCurrentUser);
+
+ userRouter.get("/:userId", auth,
 celebrate({
   params: Joi.object().keys({
     userId: Joi.string().custom(validateObjectId),
   }),
 }),
 getUserById);
-//userRouter.post("/", createUser);
+
 userRouter.patch("/me", auth,
 celebrate({
   body: Joi.object().keys({
@@ -31,9 +34,7 @@ celebrate({
 }),
 updateAvatar);
 
-//userRouter.post('/signin', login);
-//userRouter.post('/signup', createUser);
-userRouter.get('/me', getCurrentUser);
+
 
 function validateObjectId(value) {
   const isValid = mongoose.isValidObjectId(value);
