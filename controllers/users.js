@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
-const { ConflictError } = require('../errors/ConflictError');
-const { ValidationError } = require('../errors/ValidationError');
+const NotFoundError = require('../errors/NotFoundError');
+//const  ConflictError  = require('../errors/ConflictError');
+const  ValidationError  = require('../errors/ValidationError');
 
 
 //const ERROR_CODE_DUPLICATE_MONGO = 11000;
@@ -20,7 +21,8 @@ module.exports.getCurrentUser = async (req, res, next) => {
   try {
      const user = await User.findById(req.user._id)
   if (!user) {
-    return res.status(404).send({ message: "Пользователь не найден" });
+    throw NotFoundError('Пользователь не найден');
+  //  return res.status(404).send({ message: "Пользователь не найден" });
   }
  res.status(200).send(user);
 } catch (err) {
@@ -33,7 +35,8 @@ module.exports.getCurrentUser = async (req, res, next) => {
         const { userId } = req.params;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).send({ message: "Пользователь не найден" });
+          throw NotFoundError('Пользователь не найден');
+           // return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.status(200).send(user);
     } catch (err) {
@@ -68,9 +71,8 @@ module.exports.createUser = (req, res, next) => {
     next(new ValidationError('Переданы некорректные данные при создании пользователя'));
   } else
    if (err.code === 11000) {
-   // res.status(409).send({ message: 'Пользователь с таким email уже существует' });
-    next(new ConflictError('Пользователь с таким email уже существует'));
-    return;
+    res.status(409).send({ message: 'Пользователь с таким email уже существует' });
+  //  next(new ConflictError('Пользователь с таким email уже существует'));
   } else {
     next(err);
   }
@@ -83,7 +85,8 @@ module.exports.updateUser = async (req, res) => {
         const { name, about } = req.body;
         const user = await User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true });
         if (!user) {
-            return res.status(404).send({ message: "Пользователь не найден" });
+          throw NotFoundError('Пользователь не найден');
+          //  return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.send(user);
         //  return res.send({ message: "Пользователь обновился" });
@@ -98,7 +101,8 @@ module.exports.updateAvatar = async (req, res) => {
         const { avatar } = req.body;
         const user = await User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true });
         if (!user) {
-            return res.status(404).send({ message: "Пользователь не найден" });
+          throw NotFoundError('Пользователь не найден');
+          //  return res.status(404).send({ message: "Пользователь не найден" });
         }
         res.send(user);
         // return res.send({ message: "Аватар обновился" });
@@ -109,21 +113,16 @@ module.exports.updateAvatar = async (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  console.log(password);
   return User.findOne({ email })
   .select('+password')
     .then((user) => {
       // создадим токен
       const token = jwt.sign({ _id: user._id }, 'some-secret-key');
-console.log(token);
       // вернём токен
       res.send({ token });
-      console.log(token);
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(401).send({ message: err.message });
     });
 };
 
