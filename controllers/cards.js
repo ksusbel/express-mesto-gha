@@ -1,6 +1,7 @@
 const Card = require("../models/card");
+const NotFoundError = require('../errors/NotFoundError');
+const  ValidationError  = require('../errors/ValidationError');
 
-const ERROR_CODE_DUPLICATE_MONGO = 11000;
 
 module.exports.getCards = async (req, res) => {
     try {
@@ -22,7 +23,8 @@ module.exports.createCard = (req, res) => {
 
     .catch ((err) =>  {
         if (err.name === "ValidationError") {
-            return res.status(400).send({ message: "Невалидные данные" });
+          next(new ValidationError('Невалидные данные'));
+          //  return res.status(400).send({ message: "Невалидные данные" });
         } else {
         next(err);
         }
@@ -34,7 +36,8 @@ module.exports.deleteCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+          throw new NotFoundError('Карточка не найдена');
+          //  return res.status(404).send({ message: "Карточка не найдена" });
         }
         if (!(card.owner._id.toString() === req.user._id)) {
           return res.status(403).send({ message: "Нельзя удалить чужую карточку!" });
@@ -51,7 +54,8 @@ module.exports.likeCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+          throw new NotFoundError('Карточка не найдена');
+          //  return res.status(404).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
@@ -69,7 +73,8 @@ module.exports.dislikeCard = async (req, res) => {
         const { cardId } = req.params;
         const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).send({ message: "Карточка не найдена" });
+          throw new NotFoundError('Карточка не найдена');
+          //  return res.status(404).send({ message: "Карточка не найдена" });
         }
         await Card.findByIdAndUpdate(
             req.params.cardId,
