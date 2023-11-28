@@ -70,6 +70,7 @@ module.exports.createUser = (req, res, next) => {
    if (err.code === 11000) {
    // res.status(409).send({ message: 'Пользователь с таким email уже существует' });
     next(new ConflictError('Пользователь с таким email уже существует'));
+    return;
   } else {
     next(err);
   }
