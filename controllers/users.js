@@ -133,25 +133,22 @@ module.exports.updateAvatar = async (req, res, next) => {
   }
 };
 
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-  return User.findOne({ email, password })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
-      }
-      bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new UnauthorizedError('Неправильные почта или пароль');
-          }
-          // создадим токен
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key');
-          // вернём токен
-          res.send({ token });
-        });
-      res.send(user);
-    })
-    .catch(next);
+module.exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email, password }).select('+password');
+    if (!user) {
+      throw new UnauthorizedError('Неправильные почта или пароль');
+    }
+    const matched = await bcrypt.compare(password, user.password);
+    if (!matched) {
+      throw new UnauthorizedError('Неправильные почта или пароль');
+    }
+    // создадим токен
+    const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+    // вернём токен
+    res.send({ token });
+  } catch (err) {
+    next(err);
+  }
 };
