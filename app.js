@@ -1,9 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
-const { errors } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
@@ -70,7 +68,7 @@ app.use((req, res, next) => {
   next(new NotFoundError('Такой страницы не существует'));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { status = 500, message } = err;
   res
     .status(status)
@@ -79,7 +77,6 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
-  next();
 });
 
 app.listen(PORT, () => {

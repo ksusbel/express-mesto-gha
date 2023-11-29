@@ -12,15 +12,16 @@
   "author": "ksusbel",
   "license": "ISC",
   "devDependencies": {
-    "eslint-config-airbnb-base":"^15.0.0",
-    "eslint-plugin-import":"^2.29.0",
     "eslint": "^8.53.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
     "nodemon": "^3.0.1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "celebrate": "^15.0.3",
+    "errors": "^0.3.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
