@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
@@ -25,6 +27,11 @@ mongoose
   });
 
 app.use(express.json());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
+  max: 100, // 100 запросов с одного IP
+});
 
 app.post(
   '/signup',
@@ -53,16 +60,14 @@ app.post(
 
 // авторизация
 app.use(auth);
+app.use(limiter);
+app.use(helmet());
 
 // роуты, которым авторизация нужна
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
-
-app.get('/', (req, res) => {
-  res.status(200).send({ message: 'Привет' });
-});
 
 app.use((req, res, next) => {
   next(new NotFoundError('Такой страницы не существует'));
