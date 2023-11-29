@@ -1,7 +1,7 @@
 const Card = require('../models/card');
-const DeleteCardError = require('../errors/DeleteCardError');
 const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
+const DeleteCardError = require('../errors/DeleteCardError');
 
 module.exports.getCards = async (req, res) => {
   try {
