@@ -2,8 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
-const ConflictError = require('../errors/ConflictError');
+// const ConflictError = require('../errors/ConflictError');
 const ValidationError = require('../errors/ValidationError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
 // eslint-disable-next-line consistent-return
 module.exports.getUsers = async (req, res, next) => {
@@ -73,11 +74,11 @@ module.exports.createUser = (req, res, next) => {
       avatar: user.avatar,
     }))
     .catch((err) => {
-      if (err.code === 400) {
+      if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       } else if (err.code === 11000) {
-      //  res.status(409).send({ message: 'Пользователь с таким email уже существует' });
-        next(new ConflictError('Пользователь с таким email уже существует'));
+        res.status(409).send({ message: 'Пользователь с таким email уже существует' });
+      // next(new ConflictError('Пользователь с таким email уже существует'));
       } else {
         next(err);
       }
@@ -132,17 +133,27 @@ module.exports.updateAvatar = async (req, res, next) => {
   }
 };
 
-module.exports.login = (req, res) => {
-  const { email } = req.body;
-  return User.findOne({ email })
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findOne({ email, password })
     .select('+password')
+    // eslint-disable-next-line consistent-return
     .then((user) => {
-    // создадим токен
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
-      // вернём токен
-      res.send({ token });
+      if (!user) {
+        return next(new UnauthorizedError('Неправильные почта или пароль'));
+      }
+
+      bcrypt.compare(password, user.password)
+        // eslint-disable-next-line consistent-return
+        .then((matched) => {
+          if (!matched) {
+            return next(new UnauthorizedError('Неправильные почта или пароль'));
+          }
+          // создадим токен
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+          // вернём токен
+          res.send({ token });
+        });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };

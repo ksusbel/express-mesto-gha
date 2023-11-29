@@ -6,6 +6,7 @@ const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/NotFoundError');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
@@ -65,12 +66,20 @@ app.get('/', (req, res) => {
   res.status(200).send({ message: 'Привет' });
 });
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Такой страницы не существует' });
+app.use((req, res, next) => {
+  next(new NotFoundError('Такой страницы не существует'));
 });
 
-app.use((err, req, res) => {
-  res.status(500).send({ message: 'На сервере произошла ошибка' });
+app.use((err, req, res, next) => {
+  const { status = 500, message } = err;
+  res
+    .status(status)
+    .send({
+      message: (status === 500)
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
 });
 
 app.listen(PORT, () => {
