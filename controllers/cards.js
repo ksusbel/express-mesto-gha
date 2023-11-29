@@ -1,7 +1,7 @@
 const Card = require('../models/card');
+const DeleteCardError = require('../errors/DeleteCardError');
 const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
-const DeleteCardError = require('../errors/DeleteCardError');
 
 module.exports.getCards = async (req, res) => {
   try {
@@ -39,8 +39,8 @@ module.exports.deleteCard = async (req, res, next) => {
       throw new NotFoundError('Карточка не найдена');
       // return res.status(404).send({ message: 'Карточка не найдена' });
     }
-    if (!(card.owner._id.toString() === req.user._id)) {
-      next(new DeleteCardError('Нельзя удалить чужую карточку!'));
+    if (card.owner._id.toString() !== req.user._id) {
+      throw new DeleteCardError('Нельзя удалить чужую карточку!');
       // return res.status(403).send({ message: 'Нельзя удалить чужую карточку!' });
     }
     await Card.findOneAndDelete(cardId);

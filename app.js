@@ -5,8 +5,9 @@ const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
+
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
@@ -69,13 +70,13 @@ app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
 
+app.use('/*', (req, res, next) => {
+  next(new NotFoundError('Такой страницы не существует'));
+});
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   res.status(err.statusCode).send({ message: err.message });
-});
-
-app.use('/*', (req, res, next) => {
-  next(new NotFoundError('Такой страницы не существует'));
 });
 
 app.use((err, req, res) => {
