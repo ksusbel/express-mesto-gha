@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { celebrate, Joi} = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { createUser, login } = require('./controllers/users');
@@ -42,7 +42,7 @@ app.post(
       avatar: Joi.string().regex(/^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i),
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-    }),
+    }).unknown(true),
   }),
   createUser,
 );
@@ -53,7 +53,7 @@ app.post(
     body: Joi.object().keys({
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-    }),
+    }).unknown(true),
   }),
   login,
 );
@@ -67,6 +67,9 @@ app.use(helmet());
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use(errors());
+
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   res.status(err.statusCode).send({ message: err.message });
 });
