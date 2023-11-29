@@ -1,48 +1,54 @@
-const userRouter = require("express").Router();
-const mongoose = require("mongoose");
-const auth = require("../middlewares/auth");
-const { celebrate, Joi } = require("celebrate");
+const userRouter = require('express').Router();
+// const mongoose = require('mongoose');
+const { celebrate, Joi } = require('celebrate');
+const auth = require('../middlewares/auth');
 
-const { getUsers, getUserById, updateUser, updateAvatar, getCurrentUser } = require("../controllers/users");
+const {
+  getUsers,
+  getUserById,
+  updateUser,
+  updateAvatar,
+  getCurrentUser,
+} = require('../controllers/users');
 
-userRouter.get("/", getUsers);
+userRouter.get('/', getUsers);
 
-userRouter.get("/me", auth, getCurrentUser);
+userRouter.get('/me', auth, getCurrentUser);
 
 userRouter.get(
-    "/:userId",
-    auth,
-    celebrate({
-        params: Joi.object().keys({
-            userId: Joi.string().required().hex().length(24),
-        }),
+  '/:userId',
+  auth,
+  celebrate({
+    params: Joi.object().keys({
+      userId: Joi.string().required().hex().length(24),
     }),
-    getUserById
+  }),
+  getUserById,
 );
 
 userRouter.patch(
-    "/me",
-    auth,
-    celebrate({
-        body: Joi.object().keys({
-            name: Joi.string().required().min(2).max(30),
-            about: Joi.string().required().min(2).max(30),
-        }),
+  '/me',
+  auth,
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
     }),
-    updateUser
+  }),
+  updateUser,
 );
 
 userRouter.patch(
-    "/me/avatar",
-    auth,
-    celebrate({
-        body: Joi.object().keys({
-            avatar: Joi.string()
-                .required()
-                .regex(/^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i),
-        }),
+  '/me/avatar',
+  auth,
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string()
+        .required()
+        .regex(/^https?:\/\/(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i),
     }),
-    updateAvatar
+  }),
+  updateAvatar,
 );
 
 module.exports = userRouter;
