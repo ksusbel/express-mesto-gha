@@ -75,9 +75,9 @@ app.use('/*', (req, res, next) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  const { status = 500, message = 'На сервере произошла ошибка' } = err;
+  const { statusCode = 500, message = 'На сервере произошла ошибка' } = err;
   res
-    .status(status)
+    .status(statusCode)
     .send({ message });
   next();
 });
