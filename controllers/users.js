@@ -36,14 +36,14 @@ module.exports.getUserById = async (req, res, next) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
-      //    throw new NotFoundError('Пользователь не найден');
-      return res.status(404).send({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
+      // return res.status(404).send({ message: 'Пользователь не найден' });
     }
     res.status(200).send(user);
   } catch (err) {
     //   console.log(err);
-    if (err.code === 400) {
-      next(new ValidationError('Передан не валидный id'));
+    if (err.name === 'CastError') {
+      return next(new ValidationError('Передан не валидный id'));
     }
     next(err);
   }
@@ -74,7 +74,7 @@ module.exports.createUser = (req, res, next) => {
       avatar: user.avatar,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       } else if (err.code === 11000) {
       //  res.status(409).send({ message: 'Пользователь с таким email уже существует' });
