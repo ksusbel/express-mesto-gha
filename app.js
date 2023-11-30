@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { createUser, login } = require('./controllers/users');
@@ -72,7 +72,7 @@ app.use('/*', (req, res, next) => {
   next(new NotFoundError('Такой страницы не существует'));
 });
 
-// app.use(errors());
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { status = 500, message } = err;
