@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { createUser, login } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
+const errorHandler = require('./middlewares/error-handler');
 const auth = require('./middlewares/auth');
 
 // Слушаем 3000 порт
@@ -73,14 +74,7 @@ app.use('/*', (req, res, next) => {
 });
 
 app.use(errors());
-
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message = 'На сервере произошла ошибка' } = err;
-  res
-    .status(statusCode)
-    .send({ message });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
